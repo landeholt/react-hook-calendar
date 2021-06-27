@@ -1,4 +1,4 @@
-import { endOfWeek, Interval, startOfWeek } from 'date-fns';
+import { endOfWeek, Interval, startOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { useContext, createContext } from 'react';
 import { CalendarView } from '../types';
 
@@ -11,19 +11,31 @@ export type CalendarContextType = {
   // Controls
   setDate: (date: Date) => void;
   setView: (view: CalendarView) => void;
+  weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined;
   goForward: () => void;
   goBackward: () => void;
+  getDayForGrid: (i: number) => number;
+  daysFromLastMonth: number;
+};
+
+const getViewPeriod = (view: CalendarView) => {
+  const startPeriod = view === 'week' ? startOfWeek : startOfMonth;
+  const endPeriod = view === 'week' ? endOfWeek : endOfMonth;
+  return { start: startPeriod(new Date()), end: endPeriod(new Date()) };
 };
 
 export const CalendarContext = createContext<CalendarContextType>({
   date: new Date(),
-  view: 'week',
-  viewPeriod: { start: startOfWeek(new Date()), end: endOfWeek(new Date()) },
+  view: 'month',
+  viewPeriod: getViewPeriod('month'),
   viewTimes: { start: 0, end: 24 * 60 * 60 * 1000 },
   setView: () => {},
   setDate: () => {},
+  weekStartsOn: 0,
   goForward: () => {},
   goBackward: () => {},
+  getDayForGrid: () => 0,
+  daysFromLastMonth: 0,
 });
 
 /**

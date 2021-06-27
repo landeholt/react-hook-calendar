@@ -1,4 +1,5 @@
-import { eachDayOfInterval } from 'date-fns';
+import { addDays, eachDayOfInterval } from 'date-fns';
+import startOfWeek from 'date-fns/startOfWeek';
 import React, { CSSProperties, forwardRef, ReactNode } from 'react';
 import { useCalendar } from '../hooks/useCalendar';
 import { CalendarView } from '../types';
@@ -40,9 +41,17 @@ export type CalendarHeaderProps = {
  */
 export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
   function CalendarHeader(props, ref) {
-    const { view, viewPeriod } = useCalendar();
-    const days = eachDayOfInterval(viewPeriod);
-    const gridTemplateColumns = view === 'day' ? '100%' : 'repeat(7, 1fr)';
+    const { view, viewPeriod, weekStartsOn } = useCalendar();
+    let period = viewPeriod;
+    if (view === 'month') {
+      const firstDay = startOfWeek(new Date(), { weekStartsOn });
+      const lastDay = addDays(firstDay, 6);
+      period = { start: firstDay, end: lastDay };
+    }
+    const days = eachDayOfInterval(period);
+
+    const gridTemplateColumns =
+      view === 'day' ? '100%' : view === 'week' ? 'repeat(7, 1fr)' : 'repeat(7, 1fr)';
 
     return (
       <div

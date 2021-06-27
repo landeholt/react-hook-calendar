@@ -25,6 +25,7 @@ import {
   setHours,
   setMinutes,
   startOfWeek,
+  subDays,
 } from 'date-fns';
 import {
   Calendar,
@@ -34,6 +35,7 @@ import {
   useAppointment,
   useCalendar,
 } from '../';
+import { addHours, addMinutes } from 'date-fns/esm';
 
 const timezoneOffset = new Date().getTimezoneOffset() / -60;
 
@@ -42,36 +44,40 @@ const appointments = [
   {
     title: 'Lunch with Max',
     color: 'purple',
-    start: setMinutes(setHours(monday, 12), 0),
-    end: setMinutes(setHours(monday, 13), 0),
+    start: addDays(addMinutes(addHours(monday, 1), 40), 1),
+    end: addDays(addMinutes(addHours(monday, 2), 40), 1),
   },
+
   {
     title: 'Weekly Team Meeting',
     color: 'blue',
-    start: setMinutes(setHours(monday, 13), 0),
-    end: setMinutes(setHours(monday, 14), 30),
+    start: addDays(new Date(), 3),
+    end: addDays(addHours(new Date(), 2), 3),
   },
+
   {
     title: 'Day Off',
     color: 'blue',
-    start: setMinutes(setHours(addDays(monday, 4), 0), 0),
-    end: setMinutes(setHours(addDays(monday, 4), 23), 59),
+    start: addDays(new Date(), 5),
+    end: addDays(addHours(new Date(), 2), 5),
   },
+
   {
     title: 'Go over sales',
-    color: 'blue',
-    start: setMinutes(setHours(addDays(monday, 2), 9), 0),
-    end: setMinutes(setHours(addDays(monday, 2), 12), 0),
+    color: 'green',
+    start: subDays(new Date(), 27),
+    end: subDays(addHours(new Date(), 2), 27),
   },
+  /*
   {
     title: 'Pick up the kids',
     color: 'green',
     start: setMinutes(setHours(addDays(monday, 3), 18), 0),
     end: setMinutes(setHours(addDays(monday, 3), 19), 0),
-  },
+  },*/
 ];
 
-function App() {
+export function App() {
   return (
     <ChakraProvider>
       <CSSReset />
@@ -83,6 +89,7 @@ function App() {
 }
 
 function CustomCalendar() {
+  const formatter = new Intl.DateTimeFormat('sv-SE', { weekday: 'short' });
   return (
     <Calendar weekStartsOn={1} timeStart="8:00" timeEnd="20:00">
       <VStack maxW="1200px" w="100%" h="100%" spacing="8">
@@ -107,9 +114,8 @@ function CustomCalendar() {
             <Box as={CalendarHeader} flexGrow={1}>
               {({ date }) => (
                 <Center h="20" flexDirection="column" borderLeft="1px" borderColor="gray.100">
-                  <Box fontSize="3xl">{getDate(date)}</Box>
                   <Box frontSize="md" color="blackAlpha.700" mt="-0.5em">
-                    {Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date)}
+                    {formatter.format(date)}
                   </Box>
                 </Center>
               )}
@@ -122,12 +128,12 @@ function CustomCalendar() {
             <Box h="100%" flexGrow={1} as={CalendarBody}>
               <Box
                 as={CalendarGrid}
-                length="1 hour"
+                length="1 day"
                 borderTopWidth="1px"
                 borderLeftWidth="1px"
                 borderColor="gray.100"
               />
-              {appointments.map(appointment => (
+              {appointments.map((appointment) => (
                 <Appointment {...appointment} />
               ))}
             </Box>
@@ -141,7 +147,7 @@ function CustomCalendar() {
 function ViewControl() {
   const { view, setView } = useCalendar();
   const onChange = React.useCallback<React.ChangeEventHandler<HTMLSelectElement>>(
-    event => {
+    (event) => {
       const newValue = event.currentTarget.value;
       if (newValue === 'week' || newValue === 'day') {
         setView(newValue);

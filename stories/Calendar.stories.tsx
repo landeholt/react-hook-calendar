@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import { Calendar, CalendarBody, Appointment, Grid } from '../src';
+import { Calendar, CalendarBody, Appointment, CalendarGrid } from '../src';
 
 const meta: Meta = {
   title: 'Welcome',
@@ -20,16 +20,18 @@ const meta: Meta = {
 export default meta;
 
 const appointments = [
-  { start: new Date(2021, 3, 21, 12, 0, 0), end: new Date(2021, 3, 21, 14, 30, 0), title: 'Ap. 1' },
-  { start: new Date(2021, 3, 25, 10, 0, 0), end: new Date(2021, 3, 25, 17, 15, 0), title: 'Ap. 1' },
+  { start: new Date(2021, 6, 27, 12, 0, 0), end: new Date(2021, 6, 27, 14, 30, 0), title: 'Ap. 1' },
+  { start: new Date(2021, 6, 28, 10, 0, 0), end: new Date(2021, 6, 28, 17, 15, 0), title: 'Ap. 1' },
 ];
 
 const Template: Story<{}> = () => (
   <Calendar initialDate={appointments[0].start} defaultView="week">
     <div style={{ border: '1px solid #F2F2F2', padding: '0.5rem' }}>
       <CalendarBody style={{ border: '1px solid #F2F2F2' }}>
-        <Grid style={{ borderBottom: '1px solid #F2F2F2', borderRight: '1px solid #F2F2F2' }} />
-        {appointments.map(app => (
+        <CalendarGrid
+          style={{ borderBottom: '1px solid #F2F2F2', borderRight: '1px solid #F2F2F2' }}
+        />
+        {appointments.map((app) => (
           <Appointment start={app.start} end={app.end}>
             {app.title}
           </Appointment>

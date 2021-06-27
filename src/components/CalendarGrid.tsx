@@ -1,7 +1,7 @@
 import React, { CSSProperties, ReactNode } from 'react';
 import { useCalendar } from '../hooks/useCalendar';
 
-type GridLength = '30 min' | '1 hour' | '2 hours' | '4 hours';
+type GridLength = '30 min' | '1 hour' | '2 hours' | '4 hours' | '1 day';
 
 export type CalendarGridProps = {
   children?: ReactNode;
@@ -10,12 +10,13 @@ export type CalendarGridProps = {
   length?: GridLength;
 };
 
-function gridLenghtToQuaterHours(length: GridLength) {
+function gridLengthToQuaterHours(length: GridLength) {
   return {
     '30 min': 2,
     '1 hour': 4,
     '2 hours': 8,
     '4 hours': 16,
+    '1 day': 1,
   }[length];
 }
 
@@ -25,10 +26,12 @@ export function CalendarGrid({
   style,
   length = '2 hours',
 }: CalendarGridProps) {
-  const { view, viewTimes } = useCalendar();
-  const numDaysDisplayed = view === 'day' ? 1 : 7;
-  const quaterHours = gridLenghtToQuaterHours(length);
-  const numRowsDisplayed = (viewTimes.end - viewTimes.start) / (15 * 60 * 1000) / quaterHours;
+  const { view, viewTimes, getDayForGrid } = useCalendar();
+  const numDaysDisplayed = view === 'day' ? 1 : view === 'week' ? 7 : 7;
+  const quaterHours = gridLengthToQuaterHours(length);
+  const numRowsDisplayed =
+    view === 'month' ? 6 : (viewTimes.end - viewTimes.start) / (15 * 60 * 1000) / quaterHours;
+
   return (
     <>
       {Array.apply(null, Array(numDaysDisplayed)).flatMap((_, dayIndex) =>
@@ -47,6 +50,7 @@ export function CalendarGrid({
                 ...style,
               }}
             >
+              {view === 'month' && getDayForGrid(timeIndex * 7 + dayIndex)}
               {children}
             </div>
           );
