@@ -52,3 +52,5 @@ export function parseTime(time: string, propHint: string = 'as property') {
   }
   return (hours * 60 + minutes) * 60 * 1000;
 }
+
+export const range = (r: number) => new Array(r).fill(0).map((_, k) => k + 1);

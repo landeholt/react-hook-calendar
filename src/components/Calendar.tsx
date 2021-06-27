@@ -20,7 +20,7 @@ import {
 import React, { useState, ReactNode, useCallback, useMemo } from 'react';
 import { CalendarContext } from '../hooks/useCalendar';
 import { CalendarView } from '../types';
-import { parseTime, toDate } from '../util';
+import { parseTime, range, toDate } from '../util';
 
 export type CalendarProps = {
   /** The view that the calendar should use. This can be changed with */
@@ -36,7 +36,6 @@ export type CalendarProps = {
   /** Configure the day, that the week should start on */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 };
-
 /**
  * Manages the calendar state and provides the calendar context.
  */
@@ -80,17 +79,24 @@ export function Calendar({
 
   const firstDateOnMonth = startOfMonth(toDate(focusDate));
   const firstDayOnMonth = getDay(firstDateOnMonth);
-  const startWeekOn = weekStartsOn === undefined ? 0 : (weekStartsOn as number);
-  const daysFromLastMonth = Math.abs(startWeekOn - firstDayOnMonth);
+  //const startWeekOn = weekStartsOn === undefined ? 0 : (weekStartsOn as number);
+  // Number of days that we need to get from the previous month
+  const daysFromLastMonth = ((i: 0 | 1 | 2 | 3 | 4 | 5 | 6) => {
+    if (i === 0) {
+      return 7;
+    }
+    return i - 1;
+  })(firstDayOnMonth);
   const lastMonthInDays = getDaysInMonth(subDays(firstDateOnMonth, 1));
   const monthInDays = getDaysInMonth(firstDateOnMonth);
 
-  const getDayForGrid = (i: number) => {
-    if (daysFromLastMonth && i < daysFromLastMonth) {
-      return lastMonthInDays - daysFromLastMonth + i + 1;
-    }
-    return ((i - 1) % monthInDays) + 1;
-  };
+  const daysInGrid = [
+    ...Array(daysFromLastMonth)
+      .fill(lastMonthInDays)
+      .map((i, j) => i - daysFromLastMonth + j + 1),
+    ...range(monthInDays),
+    ...range(42 - daysFromLastMonth - monthInDays),
+  ];
 
   return (
     <CalendarContext.Provider
@@ -104,7 +110,7 @@ export function Calendar({
         goBackward,
         viewTimes,
         weekStartsOn,
-        getDayForGrid,
+        daysInGrid,
         daysFromLastMonth,
       }}
     >

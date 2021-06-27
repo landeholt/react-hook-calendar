@@ -14,7 +14,7 @@ export type CalendarContextType = {
   weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined;
   goForward: () => void;
   goBackward: () => void;
-  getDayForGrid: (i: number) => number;
+  daysInGrid: number[];
   daysFromLastMonth: number;
 };
 
@@ -34,7 +34,7 @@ export const CalendarContext = createContext<CalendarContextType>({
   weekStartsOn: 0,
   goForward: () => {},
   goBackward: () => {},
-  getDayForGrid: () => 0,
+  daysInGrid: [0],
   daysFromLastMonth: 0,
 });
 

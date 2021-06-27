@@ -26,7 +26,7 @@ export function CalendarGrid({
   style,
   length = '2 hours',
 }: CalendarGridProps) {
-  const { view, viewTimes, getDayForGrid } = useCalendar();
+  const { view, viewTimes, daysInGrid } = useCalendar();
   const numDaysDisplayed = view === 'day' ? 1 : view === 'week' ? 7 : 7;
   const quaterHours = gridLengthToQuaterHours(length);
   const numRowsDisplayed =
@@ -50,7 +50,7 @@ export function CalendarGrid({
                 ...style,
               }}
             >
-              {view === 'month' && getDayForGrid(timeIndex * 7 + dayIndex)}
+              {view === 'month' && daysInGrid[timeIndex * 7 + dayIndex]}
               {children}
             </div>
           );

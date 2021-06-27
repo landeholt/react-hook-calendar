@@ -44,6 +44,7 @@ export type UseAppointmentResult = {
 export function useAppointment(config: UseAppointmentConfig): UseAppointmentResult {
   const { view, viewPeriod, viewTimes, weekStartsOn, date, daysFromLastMonth } = useCalendar();
   return useMemo(() => {
+    //console.log('REACTING');
     const interval = { start: toDate(config.start), end: toDate(config.end) };
     // This is the rendered start time. This time is at least the displayed minimum time of the cal.
     const startTime = Math.max(viewTimes.start, estMillisecondsSinceStartOfDay(interval.start));
